@@ -116,11 +116,11 @@ __global__ void MakeChildrens_GPU(int Em, int Dm, int count, int countInd, doubl
 int main()
 {
 
-	int count, countInd, countParents, maxIter, maxConstIter;
+	int count, countInd, maxIter, maxConstIter;
 	double Em, Dm;
 	
 
-	countParents = 10;
+	int countParents = 10;
 
 	cout << "Enter count of points (500 - 1000): " << endl;
 	cin >> count;
@@ -146,7 +146,7 @@ int main()
 	double* h_bP = new double[countParents * N];
 	for (int i = 0; i < countParents; i++) {
 		for (int j = 0; j < N; j++) {
-			h_bP[i * N + j] = 0.7;
+			h_bP[i * N + j] = 0.0;
 		}
 	}
 
@@ -169,7 +169,7 @@ int main()
 	double* d_bP;
 	double* d_childrens;
 	double min = DBL_MAX, val = DBL_MAX;
-	int indBest, sameIter = 1;
+	int sameIter = 1;
 
 
 	cudaEvent_t start, stop;
@@ -185,7 +185,8 @@ int main()
 	cudaMalloc((void**)&d_childrens, countInd * N * sizeof(double));
 
 
-	for (int epoch = 1; epoch <= maxIter; epoch++) {
+	int epoch;
+	for (epoch = 1; epoch <= maxIter; epoch++) {
 
 
 		cudaEventRecord(start, 0);
@@ -211,12 +212,10 @@ int main()
 		auto elapsed_ms = chrono::duration_cast<chrono::milliseconds>(end - begin);
 
 		sumTime += elapsed_ms.count();
-		cout << epoch << endl;
 
 
 		if (h_arrInd[0] < min) {
 			min = h_arrInd[0];
-			indBest = epoch;
 		}
 
 		if (val == h_arrInd[0]) sameIter++;
@@ -227,7 +226,6 @@ int main()
 		}
 
 		if (sameIter >= maxConstIter) {
-			cout << "Same " << maxConstIter << " iterations" << endl;
 			break;
 		}
 
@@ -236,7 +234,7 @@ int main()
 
 	cout<< "Time: " << sumTime << endl;
 
-	//cout << "min: " << min << endl << "epoch: " << indBest << endl;
+	cout << "min: " << min << endl << "epochs: " << epoch << endl;
 
 	double* temp = (double*)malloc(N * sizeof(double));
 	cout << "Result: " << endl;
