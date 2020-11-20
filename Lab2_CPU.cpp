@@ -158,8 +158,10 @@ void makeChildren(double* parents, double* childrens, int countParents, int coun
 
 int main()
 {
-	int count, countInd, countParents, maxIter, maxConstIter;
+	int count, countInd, maxIter, maxConstIter;
 	double Em, Dm;
+	
+	int countParents=10;
 
 	cout << "Enter count of points (500 - 1000): " << endl;
 	cin >> count;
@@ -172,11 +174,6 @@ int main()
 
 	cout << "Enter varience for Mutation: " << endl;
 	cin >> Dm;
-
-	cout << "Enter count pair of parents: " << endl;
-	cin >> countParents;
-
-	countParents *= 2;
 
 	cout << "Enter maximal count of epochs: " <<endl;
 	cin >> maxIter;
@@ -197,8 +194,8 @@ int main()
 	double min = DBL_MAX, val = DBL_MAX;
 	int sameIter = 1;
 	int sumTime = 0;
-	
-	for (int epoch = 1; epoch <= maxIter; epoch++) { //Начинаем эволюцию!!!!
+	int epoch;
+	for (epoch = 1; epoch <= maxIter; epoch++) { //Начинаем эволюцию!!!!
 
 		auto begin = chrono::steady_clock::now();
 
