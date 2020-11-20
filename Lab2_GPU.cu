@@ -186,7 +186,7 @@ int main()
 
 
 	int epoch;
-	for (epoch = 1; epoch <= maxIter; epoch++) {
+	for (epoch = 1; epoch <= maxIter; epoch++) { //Начинаем Эволюцию!!!!
 
 
 		cudaEventRecord(start, 0);
