@@ -54,12 +54,12 @@ void fitness(int count, int countInd, double* childrens, double* arrInd) { // Ф
 
 }
 
-void selectBestParents(int* indexes, double* arr, int countIndividuals, int countParents, double* bP, double* childrens) { // Функция отбора(по массиву из ошибок arr выбираем индексы и кладем "участников" отбора с этими индексами в массив bP)
+void selectBestParents(int* indexes, double* arr, int countIndividuals, int countParents, double* bP, double* childrens) { // Функция отбора(сортируем массив ошибок arr, "особей" с наименьшей ошибкой ставим в начало, с наибольшей в конец )
 
 	double* arr_min = (double*)malloc(countParents * sizeof(double));
 
-	for (int p = 0; p < countParents; p++) {
-		arr_min[p] = DBL_MAX;
+	for (int i = 0; i < countParents; i++) {
+		arr_min[i] = DBL_MAX;
 	}
 
 	for (int i = 0; i < countIndividuals; i++) {
@@ -69,11 +69,11 @@ void selectBestParents(int* indexes, double* arr, int countIndividuals, int coun
 		}
 	}
 
-	for (int p = 1; p < countParents; p++) {
+	for (int k = 1; k < countParents; p++) {
 		for (int i = 0; i < countIndividuals; i++) {
-			if (arr[i] > arr_min[p - 1] && arr[i] < arr_min[p]) {
-				arr_min[p] = arr[i];
-				indexes[p] = i;
+			if (arr[i] > arr_min[k - 1] && arr[i] < arr_min[k]) {
+				arr_min[k] = arr[i];
+				indexes[k] = i;
 			}
 		}
 	}
@@ -85,6 +85,7 @@ void selectBestParents(int* indexes, double* arr, int countIndividuals, int coun
 		}
 
 	}
+	free(arr_min);
 
 }
 
@@ -127,7 +128,7 @@ void makeChildren(double* parents, double* childrens, int countParents, int coun
 	p2 = (double*)malloc(N * sizeof(double));
 	child = (double*)malloc(N * sizeof(double));
 
-	for (int i = 0; i < countParents; i++) {// Выбираем родителей для будущих детей
+	for (int i = 0; i < countParents; i++) {// Выбираем родителей для будущих детей(в качестве первого берем лучшего по фитнесу, в качестве второго худшего)
 		int l = 0;
 		for (int k = 0; k < N; k++) {
 			p1[k] = parents[i * N + k];
@@ -148,6 +149,9 @@ void makeChildren(double* parents, double* childrens, int countParents, int coun
 			}
 		}
 	}
+	free(p1);
+	free(p2);
+	free(child);
 }
 
 
@@ -191,7 +195,7 @@ int main()
 	double* childrens = (double*)malloc(countInd * N * sizeof(double));
 
 	double min = DBL_MAX, val = DBL_MAX;
-	int indBest, sameIter = 1;
+	int sameIter = 1;
 	int sumTime = 0;
 	
 	for (int epoch = 1; epoch <= maxIter; epoch++) { //Начинаем эволюцию!!!!
@@ -210,7 +214,6 @@ int main()
 		cout << epoch << endl;
 		if (arrInd[indexes[0]] < min) {
 			min = arrInd[indexes[0]];
-			indBest = epoch;
 		}
 
 		if (val == arrInd[indexes[0]]) {
@@ -223,23 +226,25 @@ int main()
 		}
 
 		if (sameIter >= maxConstIter) {
-			cout << "Same " << maxConstIter << " iterations" << endl;
 			break;
 		}
 	}
 
 
 	cout << "time: " << sumTime << endl;
-    cout << "min: " << min << endl << "epoch: " << indBest << endl;
+        cout << "min: " << min << endl << "epochs: " << epoch << endl;
 
-	//double* temp = (double*)malloc(N * sizeof(double));
+	
 	cout << "Results: " << endl;
 	for (int j = 0; j < N; j++) {
 		cout << bP[j] << " ";
 		
 	}
 	cout <<endl;
-	//free(bP);
+	free(bP);
+	free(indexes);
+	free(arrInd);
+	free(childrens);
 
 }
 
